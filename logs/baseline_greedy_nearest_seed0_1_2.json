@@ -1,0 +1,13 @@
+{
+  "cost_per_order": 4.570042801915485,
+  "success_rate": 0.8549158221641059,
+  "ontime_rate": 0.902764421909452,
+  "mean_delivery_time": 34.086563025128456,
+  "energy_per_order": 0.2182026060941716,
+  "depletion_events": 4.0,
+  "idle_pct": 0.06667568662830013,
+  "charger_utilization": 0.12737547359538326,
+  "n_delivered": 118.33333333333333,
+  "n_dropped": 20.0,
+  "episode_return": 1183.2566666666671
+}
