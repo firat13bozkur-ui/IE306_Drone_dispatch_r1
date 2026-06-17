@@ -4,3 +4,11 @@ matplotlib>=3.7
 imageio>=2.31
 pulp>=2.7
 pyyaml>=6.0
+-e .
+pytest
+numpy
+gymnasium
+matplotlib
+imageio
+pulp
+pyyaml
