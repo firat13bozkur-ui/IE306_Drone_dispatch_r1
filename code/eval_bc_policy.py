@@ -17,8 +17,8 @@ class BCPolicy:
     """
     Evaluation wrapper for behavioral cloning policy.
 
-    The network predicts action logits, but during deployment we apply
-    the same high-level safety/assignment mask used by the teacher:
+    The neural network predicts action logits.
+    During evaluation, we apply a teacher-style action mask:
     - charge low-battery drones first
     - otherwise prefer assignment actions
     """
@@ -75,19 +75,31 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/bc.yaml")
     parser.add_argument("--seeds", default="0,1,2")
+    parser.add_argument("--charge-threshold", type=float, default=None)
+
     args = parser.parse_args()
 
     with open(args.config, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
 
     env_cfg = Config.from_yaml(cfg["eval_config"])
-    seeds = [int(s.strip()) for s in args.seeds.split(",") if s.strip()]
+
+    seeds = [
+        int(s.strip())
+        for s in args.seeds.split(",")
+        if s.strip()
+    ]
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    if args.charge_threshold is not None:
+        charge_threshold = args.charge_threshold
+    else:
+        charge_threshold = float(cfg.get("teacher_charge_threshold", 0.55))
+
     policy = BCPolicy(
         model_path=cfg["save_path"],
-        charge_threshold=float(cfg.get("teacher_charge_threshold", 0.55)),
+        charge_threshold=charge_threshold,
         prefer_assignment=True,
         device=device,
     )
