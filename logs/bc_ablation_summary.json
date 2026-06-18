@@ -1,0 +1,41 @@
+{
+  "ablation_name": "BC action mask ablation",
+  "model": "bc_policy_t055.pt",
+  "evaluation_seeds": [0, 1, 2],
+  "baseline_greedy_nearest_cost_per_order": 4.570042801915485,
+  "raw_mask": {
+    "cost_per_order": 5.247156587562917,
+    "success_rate": 0.7679144149918503,
+    "ontime_rate": 0.9569830817391001,
+    "mean_delivery_time": 32.239628446687654,
+    "energy_per_order": 0.29115940033606164,
+    "depletion_events": 0.6666666666666666,
+    "idle_pct": 0.03698046588097061,
+    "charger_utilization": 0.15240497958875998,
+    "n_delivered": 107.0,
+    "n_dropped": 32.333333333333336,
+    "episode_return": 1027.5766666666675,
+    "beats_greedy_nearest": false
+  },
+  "teacher_style_mask_t056": {
+    "cost_per_order": 4.039020686062361,
+    "success_rate": 0.8012426772178083,
+    "ontime_rate": 0.9703736262095468,
+    "mean_delivery_time": 32.297551557094714,
+    "energy_per_order": 0.28573492738288053,
+    "depletion_events": 0.0,
+    "idle_pct": 0.03519679799903532,
+    "charger_utilization": 0.15894708773784935,
+    "n_delivered": 112.66666666666667,
+    "n_dropped": 28.0,
+    "episode_return": 1217.7623333333336,
+    "beats_greedy_nearest": true
+  },
+  "effect": {
+    "cost_per_order_reduction_absolute": 1.208135901500556,
+    "cost_per_order_reduction_percent": 23.02459132406461,
+    "delivered_increase": 5.666666666666671,
+    "dropped_reduction": 4.333333333333336,
+    "episode_return_increase": 190.18566666666612
+  }
+}
