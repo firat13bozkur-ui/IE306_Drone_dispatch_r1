@@ -6,12 +6,13 @@ import numpy as np
 
 class ReplayBuffer:
     """
-    Simple replay buffer for DQN.
+    Replay buffer for DQN.
 
     Stores transitions:
-    state, action, reward, next_state, done
+    state, action, reward, next_state, done, next_action_mask
 
-    The buffer is sampled uniformly.
+    next_action_mask is needed because the DQN target should not select
+    invalid actions in the next state.
     """
 
     def __init__(self, capacity):
@@ -23,7 +24,7 @@ class ReplayBuffer:
     def __len__(self):
         return len(self.buffer)
 
-    def add(self, state, action, reward, next_state, done):
+    def add(self, state, action, reward, next_state, done, next_action_mask):
         """
         Add one transition to the replay buffer.
         """
@@ -35,6 +36,7 @@ class ReplayBuffer:
                 float(reward),
                 np.asarray(next_state, dtype=np.float32),
                 bool(done),
+                np.asarray(next_action_mask, dtype=np.bool_),
             )
         )
 
@@ -48,6 +50,7 @@ class ReplayBuffer:
         rewards: [batch_size]
         next_states: [batch_size, state_dim]
         dones: [batch_size]
+        next_action_masks: [batch_size, n_actions]
         """
 
         if batch_size > len(self.buffer):
@@ -57,7 +60,7 @@ class ReplayBuffer:
 
         batch = random.sample(self.buffer, batch_size)
 
-        states, actions, rewards, next_states, dones = zip(*batch)
+        states, actions, rewards, next_states, dones, next_action_masks = zip(*batch)
 
         return (
             np.stack(states).astype(np.float32),
@@ -65,4 +68,5 @@ class ReplayBuffer:
             np.asarray(rewards, dtype=np.float32),
             np.stack(next_states).astype(np.float32),
             np.asarray(dones, dtype=np.float32),
+            np.stack(next_action_masks).astype(np.bool_),
         )
