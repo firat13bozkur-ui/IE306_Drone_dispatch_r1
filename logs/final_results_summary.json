@@ -1,0 +1,52 @@
+{
+  "main_metric": "cost_per_order",
+  "evaluation_config": "configs/eval_standard.yaml",
+  "evaluation_seeds": [0, 1, 2],
+  "results": {
+    "random": {
+      "cost_per_order": 18.78035406746031
+    },
+    "greedy_nearest": {
+      "cost_per_order": 4.570042801915485
+    },
+    "milp_rolling": {
+      "cost_per_order": 4.722329311461045
+    },
+    "best_naive_dqn_variant": {
+      "method_note": "assignment-priority DQN",
+      "cost_per_order": 16.35624714285714
+    },
+    "double_dqn": {
+      "cost_per_order": 16.897928418803414
+    },
+    "dueling_dqn": {
+      "cost_per_order": 18.706601159420284
+    },
+    "improved_greedy_teacher_t055": {
+      "method_note": "custom heuristic teacher, not learned",
+      "cost_per_order": 1.388020012911209
+    },
+    "behavioral_cloning_seed0": {
+      "cost_per_order": 4.039020686062361
+    },
+    "behavioral_cloning_seed1": {
+      "cost_per_order": 4.04530475614325
+    },
+    "behavioral_cloning_seed2": {
+      "cost_per_order": 4.0974149598099565
+    },
+    "behavioral_cloning_3seed": {
+      "mean_cost_per_order": 4.060580133338523,
+      "std_cost_per_order": 0.032051,
+      "beats_greedy_nearest": true
+    }
+  },
+  "key_findings": {
+    "best_learned_method": "behavioral_cloning_3seed",
+    "best_overall_policy": "improved_greedy_teacher_t055",
+    "greedy_nearest_cost_per_order": 4.570042801915485,
+    "bc_mean_cost_per_order": 4.060580133338523,
+    "bc_improvement_over_greedy_percent": 11.619,
+    "ablation_finding": "The same BC model failed with raw action masking but outperformed greedy_nearest when evaluated with teacher-style action masking."
+  }
+}
