@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from code.obs_utils import get_action_mask, masked_argmax, sample_valid_action
+from obs_utils import get_action_mask, masked_argmax, sample_valid_action
 
 
 class QNetwork(nn.Module):
