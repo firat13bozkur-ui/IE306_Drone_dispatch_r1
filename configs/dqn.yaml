@@ -13,8 +13,9 @@ replay_size: 50000
 min_replay_size: 1000
 
 epsilon_start: 1.0
-epsilon_end: 0.05
-epsilon_decay_steps: 15000
+epsilon_end: 0.1
+epsilon_decay_steps: 20000
+exploration_policy: greedy_nearest
 
 target_update_freq: 1000
 train_freq: 4

@@ -11,6 +11,7 @@ import yaml
 
 from drone_dispatch_env.config import Config
 from drone_dispatch_env.env_dispatch import DroneDispatchEnv
+from drone_dispatch_env.baselines import GreedyNearest
 
 from obs_utils import flatten_obs
 from replay_buffer import ReplayBuffer
@@ -92,6 +93,10 @@ def main():
     env_config_path = cfg_train["eval_config"]
     env_cfg = Config.from_yaml(env_config_path)
     env = DroneDispatchEnv(env_cfg)
+    exploration_policy_name = cfg_train.get("exploration_policy", "random")
+    expert_policy = None
+    if exploration_policy_name == "greedy_nearest":
+    	expert_policy = GreedyNearest(env_cfg)
 
     obs, info = env.reset(seed=seed)
     state = flatten_obs(obs)
@@ -179,7 +184,10 @@ def main():
                     epsilon_decay_steps,
                 )
 
-                action = agent.act(obs=obs, state=state, epsilon=epsilon)
+                if expert_policy is not None and random.random() < epsilon:
+    			action = expert_policy.act(obs)
+		else:
+			action = agent.act(obs=obs, state=state, epsilon=0.0)
 
                 next_obs, reward, terminated, truncated, info = env.step(action)
                 next_state = flatten_obs(next_obs)
