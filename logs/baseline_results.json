@@ -37,5 +37,18 @@
     "n_delivered": 118.0,
     "n_dropped": 23.0,
     "episode_return": 1172.9980000000005
+  },
+  "improved_greedy": {
+    "cost_per_order": 1.7257644536244345,
+    "success_rate": 0.9202118045285749,
+    "ontime_rate": 0.9497132576776773,
+    "mean_delivery_time": 29.692333665711732,
+    "energy_per_order": 0.23471193959507616,
+    "depletion_events": 0.3333333333333333,
+    "idle_pct": 0.0499600365775593,
+    "charger_utilization": 0.15234721457452127,
+    "n_delivered": 131.66666666666666,
+    "n_dropped": 11.333333333333334,
+    "episode_return": 1717.8846666666668
   }
 }
