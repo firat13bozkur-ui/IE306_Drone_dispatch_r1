@@ -1,0 +1,17 @@
+env_id: DroneDispatch-v0
+eval_config: configs/eval_standard.yaml
+
+seed: 0
+
+teacher_charge_threshold: 0.55
+dataset_episodes: 200
+dataset_path: data/bc_dataset_t055.npz
+
+hidden_dim: 256
+learning_rate: 0.0003
+batch_size: 128
+epochs: 30
+
+save_path: weights/bc_policy_t055.pt
+log_path: logs/bc_training_t055.csv
+eval_output_path: logs/bc_eval_seed0_1_2.json
