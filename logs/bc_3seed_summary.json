@@ -1,0 +1,53 @@
+{
+  "method": "Behavioral Cloning from ImprovedGreedyPolicy teacher",
+  "teacher_charge_threshold": 0.55,
+  "evaluation_charge_threshold": 0.56,
+  "evaluation_seeds": [0, 1, 2],
+  "training_seed_results": {
+    "seed0": {
+      "cost_per_order": 4.039020686062361,
+      "success_rate": 0.8012426772178083,
+      "ontime_rate": 0.9703736262095468,
+      "mean_delivery_time": 32.297551557094714,
+      "energy_per_order": 0.28573492738288053,
+      "depletion_events": 0.0,
+      "idle_pct": 0.03519679799903532,
+      "charger_utilization": 0.15894708773784935,
+      "n_delivered": 112.66666666666667,
+      "n_dropped": 28.0,
+      "episode_return": 1217.7623333333336
+    },
+    "seed1": {
+      "cost_per_order": 4.04530475614325,
+      "success_rate": 0.8070842460078764,
+      "ontime_rate": 0.9707062195719184,
+      "mean_delivery_time": 31.891692233457206,
+      "energy_per_order": 0.28270284907673315,
+      "depletion_events": 0.3333333333333333,
+      "idle_pct": 0.0359126848939483,
+      "charger_utilization": 0.155723962261516,
+      "n_delivered": 114.0,
+      "n_dropped": 27.333333333333332,
+      "episode_return": 1232.3836666666668
+    },
+    "seed2": {
+      "cost_per_order": 4.0974149598099565,
+      "success_rate": 0.7983308138070043,
+      "ontime_rate": 0.9737908245875412,
+      "mean_delivery_time": 31.42312369569733,
+      "energy_per_order": 0.2829962678200431,
+      "depletion_events": 0.0,
+      "idle_pct": 0.04138069197269716,
+      "charger_utilization": 0.1564251951811313,
+      "n_delivered": 113.33333333333333,
+      "n_dropped": 28.666666666666668,
+      "episode_return": 1220.1843333333336
+    }
+  },
+  "aggregate": {
+    "mean_cost_per_order": 4.060580133338523,
+    "std_cost_per_order": 0.032051,
+    "greedy_nearest_cost_per_order": 4.570042801915485,
+    "beats_greedy_nearest": true
+  }
+}
