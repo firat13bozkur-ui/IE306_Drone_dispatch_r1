@@ -2,24 +2,37 @@ import argparse
 import json
 from pathlib import Path
 
-import numpy as np
 import torch
 import yaml
 
 from drone_dispatch_env.config import Config
 from drone_dispatch_env.evaluate import evaluate
 
-from obs_utils import flatten_obs, get_action_mask, masked_argmax
+from obs_utils import flatten_obs, masked_argmax
+from dqn_agent import build_battery_aware_action_mask
 from train_bc_policy import BCNetwork
 
 
 class BCPolicy:
     """
     Evaluation wrapper for behavioral cloning policy.
+
+    The network predicts action logits, but during deployment we apply
+    the same high-level safety/assignment mask used by the teacher:
+    - charge low-battery drones first
+    - otherwise prefer assignment actions
     """
 
-    def __init__(self, model_path, device="cpu"):
+    def __init__(
+        self,
+        model_path,
+        charge_threshold=0.55,
+        prefer_assignment=True,
+        device="cpu",
+    ):
         self.device = torch.device(device)
+        self.charge_threshold = charge_threshold
+        self.prefer_assignment = prefer_assignment
 
         checkpoint = torch.load(
             model_path,
@@ -38,7 +51,12 @@ class BCPolicy:
 
     def act(self, obs):
         state = flatten_obs(obs)
-        action_mask = get_action_mask(obs)
+
+        action_mask = build_battery_aware_action_mask(
+            obs=obs,
+            charge_threshold=self.charge_threshold,
+            prefer_assignment=self.prefer_assignment,
+        )
 
         with torch.no_grad():
             state_tensor = torch.as_tensor(
@@ -69,6 +87,8 @@ def main():
 
     policy = BCPolicy(
         model_path=cfg["save_path"],
+        charge_threshold=float(cfg.get("teacher_charge_threshold", 0.55)),
+        prefer_assignment=True,
         device=device,
     )
 
