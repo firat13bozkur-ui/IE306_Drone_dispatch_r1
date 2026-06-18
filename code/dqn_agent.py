@@ -107,6 +107,6 @@ class DQNAgent:
         Load Q-network weights.
         """
 
-        checkpoint = torch.load(path, map_location=self.device)
+        checkpoint = torch.load(path, map_location=self.device, weights_only=False)
         self.q_network.load_state_dict(checkpoint["model_state_dict"])
         self.q_network.eval()

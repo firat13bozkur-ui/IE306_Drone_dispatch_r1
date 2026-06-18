@@ -23,7 +23,7 @@ class DQNPolicy:
     def __init__(self, model_path, hidden_dim=256, device="cpu"):
         self.device = torch.device(device)
 
-        checkpoint = torch.load(model_path, map_location=self.device)
+        checkpoint = torch.load(model_path, map_location=self.device, weights_only=False)
 
         self.agent = DQNAgent(
             state_dim=checkpoint["state_dim"],
