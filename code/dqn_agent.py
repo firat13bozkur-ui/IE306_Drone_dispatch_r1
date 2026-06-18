@@ -33,33 +33,83 @@ class QNetwork(nn.Module):
         return self.net(x)
 
 
-def restrict_to_assignment_actions(action_mask, obs):
+def build_battery_aware_action_mask(
+    obs,
+    charge_threshold=0.30,
+    prefer_assignment=True,
+):
     """
-    Prefer assignment actions when at least one assignment action is valid.
+    Build a safer action mask for DQN.
 
-    In the standard dispatch environment:
-    assignment actions are indexed as:
-        drone_id * k_max + order_slot
-
-    charge actions and no-op come after the assignment block.
-
-    We infer n_drones and k_max from observation shapes.
+    Logic:
+    1. If an idle drone has critically low battery and charge is valid,
+       force charge for those low-battery drones.
+    2. Otherwise, prefer assignment actions when possible.
+    3. When choosing assignments, remove low-battery drones from the assignment set.
+    4. If no assignment is available, fall back to the original valid mask.
     """
 
-    restricted_mask = np.array(action_mask, copy=True)
+    raw_mask = get_action_mask(obs)
+    mask = np.array(raw_mask, copy=True).astype(np.bool_)
 
-    n_drones = obs["drones"].shape[0]
-    k_max = obs["orders"].shape[0]
+    drones = obs["drones"]
+    orders = obs["orders"]
+
+    n_drones = drones.shape[0]
+    k_max = orders.shape[0]
     assignment_end = n_drones * k_max
+    noop_index = len(mask) - 1
 
-    assignment_mask = restricted_mask[:assignment_end]
+    # Charge action layout:
+    # assignment actions: 0 ... n_drones*k_max - 1
+    # charge actions: assignment_end ... assignment_end + n_drones - 1
+    # noop: last action
 
-    if np.any(assignment_mask):
-        new_mask = np.zeros_like(restricted_mask, dtype=np.bool_)
-        new_mask[:assignment_end] = assignment_mask
-        return new_mask
+    # 1. If any low-battery idle drone can charge, force charging first.
+    charge_mask = np.zeros_like(mask, dtype=np.bool_)
 
-    return restricted_mask
+    for d in range(n_drones):
+        soc = float(drones[d, 2])
+        alive = bool(drones[d, 3] > 0.5)
+        charge_action = assignment_end + d
+
+        if alive and soc < charge_threshold and mask[charge_action]:
+            charge_mask[charge_action] = True
+
+    if np.any(charge_mask):
+        return charge_mask
+
+    if not prefer_assignment:
+        return mask
+
+    # 2. Prefer assignments, but only for drones with enough battery.
+    assignment_mask = np.zeros_like(mask, dtype=np.bool_)
+
+    for d in range(n_drones):
+        soc = float(drones[d, 2])
+        alive = bool(drones[d, 3] > 0.5)
+
+        if not alive:
+            continue
+
+        if soc < charge_threshold:
+            continue
+
+        start = d * k_max
+        end = start + k_max
+        assignment_mask[start:end] = mask[start:end]
+
+    if np.any(assignment_mask[:assignment_end]):
+        return assignment_mask
+
+    # 3. If no safe assignment exists, fall back to valid actions.
+    if np.any(mask):
+        return mask
+
+    # Defensive fallback.
+    fallback = np.zeros_like(mask, dtype=np.bool_)
+    fallback[noop_index] = True
+    return fallback
 
 
 class DQNAgent:
@@ -74,11 +124,13 @@ class DQNAgent:
         hidden_dim=256,
         device="cpu",
         prefer_assignment=True,
+        charge_threshold=0.30,
     ):
         self.state_dim = state_dim
         self.n_actions = n_actions
         self.device = torch.device(device)
         self.prefer_assignment = prefer_assignment
+        self.charge_threshold = charge_threshold
 
         self.q_network = QNetwork(
             state_dim=state_dim,
@@ -86,26 +138,24 @@ class DQNAgent:
             hidden_dim=hidden_dim,
         ).to(self.device)
 
+    def decision_mask(self, obs):
+        """
+        Return the action mask actually used by the DQN policy.
+        This is also used for next-state target calculation.
+        """
+
+        return build_battery_aware_action_mask(
+            obs=obs,
+            charge_threshold=self.charge_threshold,
+            prefer_assignment=self.prefer_assignment,
+        )
+
     def act(self, obs, state, epsilon=0.0):
         """
-        Select one valid action.
-
-        obs:
-            original environment observation dictionary.
-            Used for action_mask and assignment filtering.
-
-        state:
-            flattened observation vector.
-            Used as neural network input.
-
-        epsilon:
-            probability of random valid action.
+        Select one valid action using epsilon-greedy over the decision mask.
         """
 
-        action_mask = get_action_mask(obs)
-
-        if self.prefer_assignment:
-            action_mask = restrict_to_assignment_actions(action_mask, obs)
+        action_mask = self.decision_mask(obs)
 
         if random.random() < epsilon:
             return sample_valid_action(action_mask)
@@ -132,6 +182,7 @@ class DQNAgent:
                 "state_dim": self.state_dim,
                 "n_actions": self.n_actions,
                 "prefer_assignment": self.prefer_assignment,
+                "charge_threshold": self.charge_threshold,
                 "model_state_dict": self.q_network.state_dict(),
             },
             path,
@@ -145,4 +196,5 @@ class DQNAgent:
         checkpoint = torch.load(path, map_location=self.device, weights_only=False)
         self.q_network.load_state_dict(checkpoint["model_state_dict"])
         self.prefer_assignment = checkpoint.get("prefer_assignment", True)
+        self.charge_threshold = checkpoint.get("charge_threshold", 0.30)
         self.q_network.eval()

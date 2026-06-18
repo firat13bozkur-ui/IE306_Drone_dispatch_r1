@@ -1,6 +1,5 @@
 import argparse
 import csv
-import os
 import random
 from pathlib import Path
 
@@ -13,7 +12,7 @@ import yaml
 from drone_dispatch_env.config import Config
 from drone_dispatch_env.env_dispatch import DroneDispatchEnv
 
-from obs_utils import flatten_obs, get_action_mask
+from obs_utils import flatten_obs
 from replay_buffer import ReplayBuffer
 from dqn_agent import DQNAgent, QNetwork
 
@@ -50,7 +49,9 @@ def train_step(
     rewards = torch.as_tensor(rewards, dtype=torch.float32, device=device)
     next_states = torch.as_tensor(next_states, dtype=torch.float32, device=device)
     dones = torch.as_tensor(dones, dtype=torch.float32, device=device)
-    next_action_masks = torch.as_tensor(next_action_masks, dtype=torch.bool, device=device)
+    next_action_masks = torch.as_tensor(
+        next_action_masks, dtype=torch.bool, device=device
+    )
 
     q_values = agent.q_network(states)
     chosen_q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
@@ -58,7 +59,7 @@ def train_step(
     with torch.no_grad():
         next_q_values = target_network(next_states)
 
-        # Invalid next actions should never be selected in target calculation.
+        # Invalid next actions should not be selected in the Bellman target.
         next_q_values = next_q_values.masked_fill(~next_action_masks, -1e9)
 
         max_next_q_values = next_q_values.max(dim=1).values
@@ -104,6 +105,8 @@ def main():
         n_actions=n_actions,
         hidden_dim=int(cfg_train["hidden_dim"]),
         device=device,
+        prefer_assignment=True,
+        charge_threshold=0.30,
     )
 
     target_network = QNetwork(
@@ -181,7 +184,10 @@ def main():
                 next_state = flatten_obs(next_obs)
                 done = terminated or truncated
 
-                next_action_mask = get_action_mask(next_obs)
+                # Important:
+                # Use the same decision mask in training targets as the policy uses
+                # during action selection.
+                next_action_mask = agent.decision_mask(next_obs)
 
                 replay_buffer.add(
                     state=state,
@@ -242,7 +248,8 @@ def main():
                 f"epsilon={epsilon:.3f} "
                 f"loss={mean_loss:.4f} "
                 f"delivered={env.stats.get('delivered', 0)} "
-                f"dropped={env.stats.get('dropped', 0)}"
+                f"dropped={env.stats.get('dropped', 0)} "
+                f"depletion_events={env.stats.get('depletion_events', 0)}"
             )
 
     agent.save(save_path)
