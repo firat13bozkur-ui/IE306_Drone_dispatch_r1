@@ -8,7 +8,7 @@ import yaml
 from drone_dispatch_env.config import Config
 from drone_dispatch_env.evaluate import evaluate
 
-from obs_utils import flatten_obs, masked_argmax
+from obs_utils import flatten_obs, get_action_mask, masked_argmax
 from dqn_agent import build_battery_aware_action_mask
 from train_bc_policy import BCNetwork
 
@@ -17,20 +17,21 @@ class BCPolicy:
     """
     Evaluation wrapper for behavioral cloning policy.
 
-    The neural network predicts action logits.
-    During evaluation, we apply a teacher-style action mask:
-    - charge low-battery drones first
-    - otherwise prefer assignment actions
+    mask_mode options:
+    - raw: use only the simulator's original valid action mask
+    - teacher: use teacher-style action mask
     """
 
     def __init__(
         self,
         model_path,
-        charge_threshold=0.55,
+        mask_mode="teacher",
+        charge_threshold=0.56,
         prefer_assignment=True,
         device="cpu",
     ):
         self.device = torch.device(device)
+        self.mask_mode = mask_mode
         self.charge_threshold = charge_threshold
         self.prefer_assignment = prefer_assignment
 
@@ -49,14 +50,22 @@ class BCPolicy:
         self.model.load_state_dict(checkpoint["model_state_dict"])
         self.model.eval()
 
+    def _action_mask(self, obs):
+        if self.mask_mode == "raw":
+            return get_action_mask(obs)
+
+        if self.mask_mode == "teacher":
+            return build_battery_aware_action_mask(
+                obs=obs,
+                charge_threshold=self.charge_threshold,
+                prefer_assignment=self.prefer_assignment,
+            )
+
+        raise ValueError(f"Unknown mask_mode: {self.mask_mode}")
+
     def act(self, obs):
         state = flatten_obs(obs)
-
-        action_mask = build_battery_aware_action_mask(
-            obs=obs,
-            charge_threshold=self.charge_threshold,
-            prefer_assignment=self.prefer_assignment,
-        )
+        action_mask = self._action_mask(obs)
 
         with torch.no_grad():
             state_tensor = torch.as_tensor(
@@ -75,7 +84,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/bc.yaml")
     parser.add_argument("--seeds", default="0,1,2")
+    parser.add_argument("--mask-mode", choices=["raw", "teacher"], default="teacher")
     parser.add_argument("--charge-threshold", type=float, default=None)
+    parser.add_argument("--output", default=None)
 
     args = parser.parse_args()
 
@@ -99,6 +110,7 @@ def main():
 
     policy = BCPolicy(
         model_path=cfg["save_path"],
+        mask_mode=args.mask_mode,
         charge_threshold=charge_threshold,
         prefer_assignment=True,
         device=device,
@@ -108,7 +120,11 @@ def main():
 
     print(json.dumps(results["mean"], indent=2))
 
-    output_path = Path(cfg["eval_output_path"])
+    if args.output is not None:
+        output_path = Path(args.output)
+    else:
+        output_path = Path(cfg["eval_output_path"])
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w", encoding="utf-8") as f:
