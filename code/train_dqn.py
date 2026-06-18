@@ -93,10 +93,12 @@ def main():
     env_config_path = cfg_train["eval_config"]
     env_cfg = Config.from_yaml(env_config_path)
     env = DroneDispatchEnv(env_cfg)
+
     exploration_policy_name = cfg_train.get("exploration_policy", "random")
     expert_policy = None
+
     if exploration_policy_name == "greedy_nearest":
-    	expert_policy = GreedyNearest(env_cfg)
+        expert_policy = GreedyNearest(env_cfg)
 
     obs, info = env.reset(seed=seed)
     state = flatten_obs(obs)
@@ -132,6 +134,7 @@ def main():
 
     gamma = float(cfg_train["gamma"])
     reward_scale = float(cfg_train.get("reward_scale", 1.0))
+
     batch_size = int(cfg_train["batch_size"])
     min_replay_size = int(cfg_train["min_replay_size"])
     train_freq = int(cfg_train["train_freq"])
@@ -184,24 +187,24 @@ def main():
                     epsilon_decay_steps,
                 )
 
+                # Guided exploration:
+                # With probability epsilon, use greedy_nearest as a teacher policy.
+                # Otherwise, use the learned DQN policy.
                 if expert_policy is not None and random.random() < epsilon:
-    			action = expert_policy.act(obs)
-		else:
-			action = agent.act(obs=obs, state=state, epsilon=0.0)
+                    action = expert_policy.act(obs)
+                else:
+                    action = agent.act(obs=obs, state=state, epsilon=0.0)
 
                 next_obs, reward, terminated, truncated, info = env.step(action)
                 next_state = flatten_obs(next_obs)
                 done = terminated or truncated
 
-                # Important:
-                # Use the same decision mask in training targets as the policy uses
-                # during action selection.
                 next_action_mask = agent.decision_mask(next_obs)
 
                 replay_buffer.add(
                     state=state,
                     action=action,
-                    reward=reward*reward_scale,
+                    reward=reward * reward_scale,
                     next_state=next_state,
                     done=done,
                     next_action_mask=next_action_mask,
