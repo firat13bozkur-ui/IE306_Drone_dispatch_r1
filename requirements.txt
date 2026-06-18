@@ -12,3 +12,4 @@ matplotlib
 imageio
 pulp
 pyyaml
+torch
