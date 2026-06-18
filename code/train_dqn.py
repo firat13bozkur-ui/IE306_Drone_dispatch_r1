@@ -126,6 +126,7 @@ def main():
     replay_buffer = ReplayBuffer(capacity=int(cfg_train["replay_size"]))
 
     gamma = float(cfg_train["gamma"])
+    reward_scale = float(cfg_train.get("reward_scale", 1.0))
     batch_size = int(cfg_train["batch_size"])
     min_replay_size = int(cfg_train["min_replay_size"])
     train_freq = int(cfg_train["train_freq"])
@@ -192,7 +193,7 @@ def main():
                 replay_buffer.add(
                     state=state,
                     action=action,
-                    reward=reward,
+                    reward=reward*reward_scale,
                     next_state=next_state,
                     done=done,
                     next_action_mask=next_action_mask,
