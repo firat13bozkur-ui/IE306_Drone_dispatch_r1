@@ -1,0 +1,9 @@
+eval_config: configs/eval_standard.yaml
+
+charge_threshold: 0.50
+
+route_weight: 1.0
+urgency_weight: 0.25
+battery_penalty_weight: 5.0
+
+output_path: logs/planning_eval_seed0_1_2.json
