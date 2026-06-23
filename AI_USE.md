@@ -46,7 +46,9 @@ ChatGPT was used for the following purposes:
 
 \* Supporting code organization and experiment planning
 
+\* Assisting the implementation and debugging of the Role C planning policy
 
+\* Supporting evaluation, comparison, and analysis of planning-based dispatch methods
 
 \## Human Responsibility
 

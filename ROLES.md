@@ -66,7 +66,9 @@ Role C — Planning methods
 
 Dyna-Q or MCTS / rollout-based repositioning planner.
 
+Current implementation:
 
+Planning-based dispatch policy combining routed distance, order urgency, and battery-aware assignment scoring.
 
 \## Joint Components
 

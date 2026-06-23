@@ -431,6 +431,30 @@ This ablation shows that structured action masking is a key component of the fin
 \---
 
 
+\## 9A. Planning-Based Dispatch Policy (Role C)
+
+As the planning-method contribution, a planning-inspired dispatch policy was developed based on route-aware assignment scoring.
+
+Unlike the improved greedy baseline, the planning policy evaluates each valid assignment using three components:
+
+1. Routed travel distance.
+2. Order urgency (waiting time).
+3. Battery feasibility and depletion risk.
+
+Low-battery drones are prioritized for charging before assignment decisions. For dispatch actions, the policy selects the assignment with the lowest planning score.
+
+The policy was evaluated using the standard evaluation configuration (`configs/eval_standard.yaml`) and evaluation seeds 0, 1, and 2.
+
+| Method | cost_per_order | success_rate | delivered |
+|----------|----------:|----------:|----------:|
+| Improved Greedy (default configuration) | 1.726 | 0.920 | 131.67 |
+| Planning Policy | 1.458 | 0.935 | 134.67 |
+
+The planning policy improved cost_per_order by approximately 15.5% compared to the default improved greedy configuration while increasing the number of delivered orders and reducing dropped deliveries.
+
+Although it did not surpass the best threshold-tuned improved greedy teacher (cost_per_order = 1.388), it demonstrated that planning-based prioritization using urgency and battery-awareness can improve dispatch performance.
+
+---
 
 \## 10. Final Result Summary
 
