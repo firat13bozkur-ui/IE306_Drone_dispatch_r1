@@ -18,12 +18,7 @@
 
 | Teammate 1   | Policy-based method / actor-critic experiments                                                                                                     |
 
-| Teammate 2   | Planning-based method / offline RL / multi-agent component                                                                                         |
-
-
-
-> Note: The role table should be updated according to the final contribution split before submission.
-
+| Gizem Kanık  | Planning-based dispatch policy, evaluation pipeline, planning policy analysis, documentation                                                       |
 
 
 \---

@@ -1,4 +1,4 @@
-\# ROLES.md
+H\# ROLES.md
 
 
 
@@ -10,13 +10,13 @@
 
 
 
-This document records the tentative role distribution for the team.
+This document records the  role distribution for the team.
 
 The role ownerships below are not final yet and will be revised after the team finalizes the implementation plan.
 
 
 
-\## Team Members and Tentative Roles
+\## Team Members and Roles
 
 
 
@@ -24,7 +24,7 @@ The role ownerships below are not final yet and will be revised after the team f
 
 
 
-Tentative responsibility: environment setup, baseline reproduction, repository organization, main implementation support, training/evaluation pipeline.
+ responsibility: environment setup, baseline reproduction, repository organization, main implementation support, training/evaluation pipeline.
 
 
 
@@ -40,7 +40,7 @@ DQN, Double DQN, and Dueling DQN for the discrete drone dispatch environment.
 
 
 
-Tentative responsibility: to be finalized.
+ responsibility: to be finalized.
 
 
 
@@ -52,18 +52,14 @@ REINFORCE, GAE, A2C, and DDPG.
 
 
 
-\### Teammate 2
+\### Gizem Kanık
 
+Responsibility:
+Planning-based dispatch policy, policy evaluation, experimental analysis, and documentation.
 
+Method ownership:
 
-Tentative responsibility: to be finalized.
-
-
-
-Possible method ownership:
-
-Role C — Planning methods
-
+Role C — Planning-based dispatch policy
 Dyna-Q or MCTS / rollout-based repositioning planner.
 
 Current implementation:
