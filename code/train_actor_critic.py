@@ -72,6 +72,7 @@ def train_actor_critic(
     optimizer = torch.optim.Adam(agent.network.parameters(), lr=lr)
 
     episode_logs = []
+    update_every = 20  # Her 20 adımda bir güncelleme yapacak (N-step tarzı)
 
     for episode in range(1, total_episodes + 1):
         obs, info = env.reset(seed=seed + episode)
@@ -116,49 +117,49 @@ def train_actor_critic(
             episode_return += float(reward)
             obs = next_obs
 
-        returns = []
-        running_return = 0.0
-        for reward in reversed(rewards):
-            running_return = reward + gamma * running_return
-            returns.append(running_return)
-        returns.reverse()
+            # Her update_every adımda bir veya episode bittiğinde ara güncelleme yap
+            if len(rewards) >= update_every or terminated or truncated:
+                returns = []
+                with torch.no_grad():
+                    next_state = flatten_obs(obs)
+                    next_state_tensor = torch.as_tensor(next_state, dtype=torch.float32, device=agent.device).unsqueeze(0)
+                    _, next_v = agent.network(next_state_tensor)
+                    running_return = float(next_v.squeeze(0).item()) if not terminated else 0.0
 
-        returns_tensor = torch.as_tensor(
-            returns,
-            dtype=torch.float32,
-            device=agent.device,
-        )
+                for r in reversed(rewards):
+                    running_return = r + gamma * running_return
+                    returns.append(running_return)
+                returns.reverse()
 
-        values_tensor = torch.stack(values)
-        log_probs_tensor = torch.stack(log_probs)
-        entropies_tensor = torch.stack(entropies)
+                returns_tensor = torch.as_tensor(returns, dtype=torch.float32, device=agent.device)
+                values_tensor = torch.stack(values)
+                log_probs_tensor = torch.stack(log_probs)
+                entropies_tensor = torch.stack(entropies)
 
-        if len(returns_tensor) > 1:
-            returns_tensor = (returns_tensor - returns_tensor.mean()) / (
-                returns_tensor.std() + 1e-8
-            )
+                advantages = returns_tensor - values_tensor.detach()
+                if len(advantages) > 1:
+                    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-        advantages = returns_tensor - values_tensor.detach()
+                policy_loss = -(log_probs_tensor * advantages).mean()
+                value_loss = F.mse_loss(values_tensor, returns_tensor)
+                entropy_loss = -entropies_tensor.mean()
 
-        policy_loss = -(log_probs_tensor * advantages).mean()
-        value_loss = F.mse_loss(values_tensor, returns_tensor)
-        entropy_loss = -entropies_tensor.mean()
+                loss = policy_loss + value_coef * value_loss + entropy_coef * entropy_loss
 
-        loss = policy_loss + value_coef * value_loss + entropy_coef * entropy_loss
+                optimizer.zero_grad()
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(agent.network.parameters(), max_norm=1.0)
+                optimizer.step()
 
-        optimizer.zero_grad()
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(agent.network.parameters(), max_norm=1.0)
-        optimizer.step()
+                log_probs = []
+                values = []
+                rewards = []
+                entropies = []
 
         metrics = info.get("metrics", {})
         log_row = {
             "episode": episode,
             "episode_return": float(episode_return),
-            "loss": float(loss.item()),
-            "policy_loss": float(policy_loss.item()),
-            "value_loss": float(value_loss.item()),
-            "entropy": float(entropies_tensor.mean().item()),
             "cost_per_order": float(metrics.get("cost_per_order", np.nan)),
             "n_delivered": float(metrics.get("n_delivered", np.nan)),
             "n_dropped": float(metrics.get("n_dropped", np.nan)),
@@ -175,8 +176,8 @@ def train_actor_critic(
 
     env.close()
 
-    os.makedirs(Path(log_path).parent, exist_ok=True)
     os.makedirs(Path(weight_path).parent, exist_ok=True)
+    os.makedirs(Path(log_path).parent, exist_ok=True)
 
     agent.save(weight_path)
 
@@ -215,20 +216,20 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/eval_standard.yaml")
     parser.add_argument("--episodes", type=int, default=50)
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--gamma", type=float, default=0.99)
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--hidden-dim", type=int, default=256)
+    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--hidden-dim", type=int, default=128)
     parser.add_argument("--value-coef", type=float, default=0.5)
     parser.add_argument("--entropy-coef", type=float, default=0.01)
     parser.add_argument("--device", default="cpu")
     parser.add_argument(
         "--log-path",
-        default="logs/role_b_actor_critic_summary.json",
+        default="logs/actor_critic_eval_seed0_1_2.json",
     )
     parser.add_argument(
         "--weight-path",
-        default="weights/role_b_actor_critic.pt",
+        default="weights/actor_critic_seed0.pt",
     )
     args = parser.parse_args()
 

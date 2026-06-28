@@ -1,0 +1,425 @@
+{
+  "method": "masked_actor_critic",
+  "config_path": "configs/eval_standard.yaml",
+  "train_seed": 0,
+  "total_episodes": 50,
+  "hyperparameters": {
+    "gamma": 0.99,
+    "lr": 0.0003,
+    "hidden_dim": 128,
+    "value_coef": 0.5,
+    "entropy_coef": 0.01
+  },
+  "final_evaluation": {
+    "cost_per_order": 18.342698194762264,
+    "success_rate": 0.6787082649151613,
+    "ontime_rate": 0.9289092295957285,
+    "mean_delivery_time": 35.45062293414696,
+    "energy_per_order": 0.3005369946605592,
+    "depletion_events": 8.0,
+    "idle_pct": 0.08246663129272215,
+    "charger_utilization": 0.05288032165817722,
+    "n_delivered": 38.0,
+    "n_dropped": 18.333333333333332,
+    "episode_return": -131.92733333333334,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "per_seed": [
+      {
+        "cost_per_order": 19.738666666666663,
+        "success_rate": 0.7142857142857143,
+        "ontime_rate": 0.9,
+        "mean_delivery_time": 36.13333333333333,
+        "energy_per_order": 0.30199999999999505,
+        "depletion_events": 8,
+        "idle_pct": 0.08382642998027613,
+        "charger_utilization": 0.026627218934911243,
+        "n_delivered": 30,
+        "n_dropped": 12,
+        "episode_return": -157.23000000000008
+      },
+      {
+        "cost_per_order": 18.742710526315783,
+        "success_rate": 0.6551724137931034,
+        "ontime_rate": 0.9736842105263158,
+        "mean_delivery_time": 35.63157894736842,
+        "energy_per_order": 0.3137631578947314,
+        "depletion_events": 8,
+        "idle_pct": 0.06465833945628215,
+        "charger_utilization": 0.06245407788390889,
+        "n_delivered": 38,
+        "n_dropped": 20,
+        "episode_return": -147.333
+      },
+      {
+        "cost_per_order": 16.546717391304345,
+        "success_rate": 0.6666666666666666,
+        "ontime_rate": 0.9130434782608695,
+        "mean_delivery_time": 34.58695652173913,
+        "energy_per_order": 0.2858478260869513,
+        "depletion_events": 8,
+        "idle_pct": 0.09891512444160817,
+        "charger_utilization": 0.06955966815571155,
+        "n_delivered": 46,
+        "n_dropped": 23,
+        "episode_return": -91.21899999999997
+      }
+    ]
+  },
+  "training_log": [
+    {
+      "episode": 1,
+      "episode_return": 64.01200000000004,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 2,
+      "episode_return": 196.262,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 3,
+      "episode_return": -332.26200000000006,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 4,
+      "episode_return": -247.20499999999998,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 5,
+      "episode_return": -163.07099999999997,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 6,
+      "episode_return": -213.67899999999992,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 7,
+      "episode_return": -119.85700000000007,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 8,
+      "episode_return": -80.713,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 9,
+      "episode_return": -193.02500000000003,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 10,
+      "episode_return": -107.09000000000024,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 11,
+      "episode_return": -609.9920000000001,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 12,
+      "episode_return": -325.7830000000001,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 13,
+      "episode_return": 25.748000000000133,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 14,
+      "episode_return": -92.463,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 15,
+      "episode_return": -33.281000000000034,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 16,
+      "episode_return": -119.49300000000011,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 17,
+      "episode_return": -103.51299999999979,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 18,
+      "episode_return": -303.605,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 19,
+      "episode_return": -875.649,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 20,
+      "episode_return": -82.54400000000007,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 21,
+      "episode_return": -261.25699999999995,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 22,
+      "episode_return": -435.16700000000003,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 23,
+      "episode_return": -275.08599999999984,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 24,
+      "episode_return": -73.20200000000008,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 25,
+      "episode_return": -499.1250000000001,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 26,
+      "episode_return": -346.84900000000005,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 27,
+      "episode_return": -534.32,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 28,
+      "episode_return": -676.9220000000001,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 29,
+      "episode_return": 224.26299999999986,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 30,
+      "episode_return": -246.45800000000014,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 31,
+      "episode_return": -90.94899999999996,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 32,
+      "episode_return": -350.78200000000004,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 33,
+      "episode_return": 128.606,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 34,
+      "episode_return": -63.50999999999999,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 35,
+      "episode_return": -48.52000000000024,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 36,
+      "episode_return": 41.66299999999987,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 37,
+      "episode_return": -355.80999999999995,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 38,
+      "episode_return": -251.95900000000006,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 39,
+      "episode_return": -177.033,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 40,
+      "episode_return": -154.82800000000003,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 41,
+      "episode_return": -180.798,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 42,
+      "episode_return": -251.23000000000002,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 43,
+      "episode_return": -34.66400000000003,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 44,
+      "episode_return": -330.84400000000005,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 45,
+      "episode_return": -992.0669999999999,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 46,
+      "episode_return": 2.283999999999935,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 47,
+      "episode_return": 64.41300000000001,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 48,
+      "episode_return": -215.66299999999987,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 49,
+      "episode_return": -549.694,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    },
+    {
+      "episode": 50,
+      "episode_return": -152.817,
+      "cost_per_order": NaN,
+      "n_delivered": NaN,
+      "n_dropped": NaN
+    }
+  ],
+  "weight_path": "weights/actor_critic_seed0.pt"
+}
