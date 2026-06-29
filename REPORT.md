@@ -16,10 +16,9 @@
 
 | Fırat Bozkur | Environment setup, baseline evaluation, value-based RL experiments, improved greedy teacher policy, behavioral cloning pipeline, ablation analysis |
 
-| Teammate 1   | Policy-based method / actor-critic experiments                                                                                                     |
+| Doğuhan Duman | Policy-based method / actor-critic experiments |
 
-| Gizem Kanık  | Planning-based dispatch policy, evaluation pipeline, planning policy analysis, documentation                                                       |
-
+| Gizem Kanık | Planning-based method implementation, planning policy evaluation, baseline comparison, planning experiment analysis, report contribution |
 
 \---
 
