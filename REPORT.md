@@ -449,6 +449,64 @@ The planning policy improved cost_per_order by approximately 15.5% compared to t
 Although it did not surpass the best threshold-tuned improved greedy teacher (cost_per_order = 1.388), it demonstrated that planning-based prioritization using urgency and battery-awareness can improve dispatch performance.
 
 ---
+## 9A. Policy-Based Dispatch Policy (Role B)
+
+### 1. Method Description
+
+For the policy-based contribution, a centralized **Masked Actor-Critic (Advantage Actor-Critic, A2C)** agent was implemented to learn dispatch decisions directly through reinforcement learning. The neural network consists of a shared Multi-Layer Perceptron (MLP) with two hidden layers of 128 neurons using ReLU activation functions. The shared feature representation is divided into two outputs:
+
+- **Actor:** predicts the probability distribution over the 169 discrete dispatch actions.
+- **Critic:** estimates the state value \(V(s)\), representing the expected discounted future return.
+
+This architecture allows the policy network to learn action selection while simultaneously estimating long-term value for policy improvement.
+
+### 2. Action Masking
+
+Because only a small subset of the 169 actions is valid at any decision step, an action masking mechanism was integrated into the actor network. Invalid actions receive extremely negative logits before the probability distribution is computed, ensuring that illegal drone-order assignments are never selected during training or evaluation.
+
+This significantly improves training stability by preventing the policy from exploring infeasible dispatch decisions.
+
+### 3. Hyperparameter Study
+
+Several hyperparameters were investigated to improve learning performance.
+
+The standard episodic update was replaced with a **20-step bootstrapping strategy**, reducing variance and improving convergence speed.
+
+Additional experiments included:
+
+- Learning rate sweep
+  - \(1\times10^{-4}\)
+  - \(3\times10^{-4}\)
+
+- Entropy coefficient sweep
+  - 0.01
+  - 0.05
+
+The learning rate of **3×10⁻⁴** produced the most stable learning behaviour. Increasing the entropy coefficient to **0.05** resulted in excessive exploration, significantly degrading policy performance.
+
+### 4. Experimental Results
+
+The policy was evaluated using the standard evaluation configuration with three random seeds.
+
+| Metric | Masked Actor-Critic | Greedy Baseline |
+|----------|-------------------:|----------------:|
+| Cost per Order | 18.34 | 4.57 |
+| Success Rate | 67.87% | 85.49% |
+| Delivered Orders | 38.00 | 118.33 |
+| Dropped Orders | 18.33 | 20.00 |
+| Episode Return | -131.93 | 1183.26 |
+
+Although the actor-critic approach did not outperform the improved greedy baseline, it successfully demonstrated a complete implementation of a masked policy-gradient reinforcement learning algorithm for the drone dispatch problem.
+
+### 5. Discussion
+
+Compared with the initial implementation, introducing **20-step bootstrapping** reduced the cost per order from **22.92** to **18.34**, indicating that shorter temporal credit assignment improves optimization stability.
+
+Despite these improvements, the policy-gradient approach remained less sample-efficient than the value-based DQN method because it must simultaneously explore a large discrete action space while satisfying strict dispatch constraints.
+
+Nevertheless, the implementation validates that masked actor-critic methods can be successfully applied to constrained drone dispatch environments and provides a strong foundation for future extensions using PPO or other advanced policy optimization algorithms.
+
+---
 
 \## 10. Final Result Summary
 
